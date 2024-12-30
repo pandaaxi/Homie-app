@@ -1,0 +1,46 @@
+name: Flutter Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Flutter App
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. 设置 Flutter 环境
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. 打包 Android APK
+      - name: Build APK
+        run: flutter build apk
+
+      # 5. 打包 Web 应用（如果需要）
+      - name: Build Web App
+        run: flutter build web
+
+      # 6. 上传构建产物到 GitHub Actions Artifact
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-build-artifacts
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/web/
